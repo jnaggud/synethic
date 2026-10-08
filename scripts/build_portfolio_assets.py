@@ -1,6 +1,6 @@
 """Compose labeled figures from the project's unchanged historical output grids.
 
-Optional dependency: matplotlib. Run from any directory in the repository.
+Install requirements-figures.txt. Run from any directory in the repository.
 """
 
 from pathlib import Path
@@ -15,6 +15,50 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "docs" / "assets"
 NAVY, TEAL, MUTED = "#10232f", "#6ae2bc", "#a9bcc7"
+
+
+def build_social_preview():
+    """Compose a repository link card using an unaltered historical sample grid."""
+    plt.rcParams.update({"font.family": "DejaVu Sans"})
+    fig = plt.figure(figsize=(12, 6.3), dpi=100, facecolor=NAVY)
+    fig.text(0.055, 0.83, "SynEthic", color="white", fontsize=48, weight="bold")
+    fig.text(
+        0.058,
+        0.74,
+        "MACHINE LEARNING / RESEARCH PROTOTYPE",
+        color=TEAL,
+        fontsize=10,
+        weight="bold",
+    )
+    fig.text(
+        0.055,
+        0.49,
+        "Synthetic chest X-ray\ngeneration",
+        color="white",
+        fontsize=29,
+        linespacing=1.35,
+    )
+    fig.text(0.058, 0.34, "Python · TensorFlow · DCGAN", color=MUTED, fontsize=15)
+    ax = fig.add_axes([0.625, 0.245, 0.33, 0.63])
+    ax.imshow(Image.open(ASSETS / "epoch-500.png"))
+    ax.set_axis_off()
+    fig.text(
+        0.632,
+        0.205,
+        "HISTORICAL SAMPLES / EPOCH 500",
+        color=MUTED,
+        fontsize=9,
+    )
+    fig.text(
+        0.058,
+        0.11,
+        "CONFIGURABLE TRAINING  /  CHECKPOINT RECOVERY  /  MODEL EXPORT",
+        color=TEAL,
+        fontsize=10,
+        weight="bold",
+    )
+    fig.savefig(ASSETS / "social-preview.png", dpi=100)
+    plt.close(fig)
 
 
 def main():
@@ -95,6 +139,7 @@ def main():
     fig.subplots_adjust(left=0.025, right=0.975, top=0.84, bottom=0.12, wspace=0.025)
     fig.savefig(ASSETS / "training-progression.png", dpi=120)
     plt.close(fig)
+    build_social_preview()
 
 
 if __name__ == "__main__":

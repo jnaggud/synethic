@@ -1,4 +1,4 @@
-# SynthEthic POC v2: Improved with configurable parameters
+# SynEthic: archived configurable prototype. Use ../train.py for supported training.
 # This version allows changing IMAGE_SIZE and other parameters without breaking the model
 
 import tensorflow as tf

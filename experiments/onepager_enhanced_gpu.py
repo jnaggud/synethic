@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# SynthEthic: GPU-Optimized Synthetic Medical Image Generation
-# Enhanced version with GPU acceleration for Mac
+# SynEthic: archived Metal and mixed-precision experiment.
+# Known graph-mode limitations; use ../train.py for the supported trainer.
 
 import os
 import sys
@@ -212,7 +212,7 @@ class DataLoader:
 
 # --- 4. PRIVACY GUARDIAN ---
 class PrivacyGuardian:
-    """Ensures generated images don't match training data too closely."""
+    """Experimental similarity penalty; does not establish privacy protection."""
 
     def __init__(self, training_data_sample, similarity_threshold=0.9):
         self.reference_batch = training_data_sample

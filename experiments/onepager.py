@@ -1,6 +1,6 @@
-# SynthEthic POC: Synthetic Medical Image Generation
+# SynEthic: archived DCGAN prototype. Use ../train.py for the supported trainer.
 # This script builds and trains a DCGAN to generate synthetic chest X-ray images.
-# It includes a conceptual "PrivacyGuardian" to demonstrate our core value proposition.
+# The experimental similarity penalty does not provide a privacy guarantee.
 
 import tensorflow as tf
 from tensorflow.keras import layers, models, optimizers
@@ -14,7 +14,7 @@ import glob
 from PIL import Image
 
 # --- 1. CONFIGURATION & SETUP ---
-# Business Goal: Define the parameters for our POC. This allows for easy tweaking and shows investors we have a structured approach.
+# Fixed hyperparameters used by this prototype.
 IMAGE_SIZE = 64  # For faster training, we'll use 64x64. For higher fidelity, this would be increased.
 BATCH_SIZE = 128
 NOISE_DIM = 100  # The dimension of the random noise vector fed to the generator.
@@ -24,12 +24,11 @@ BETA_1 = 0.5     # Parameter for the Adam optimizer, recommended for GANs.
 
 # --- 2. DATA LOADING & PREPARATION
 # ---
-# Business Goal: Show we can handle real-world, messy data. We'll download a public dataset,
-# select a specific class ('PNEUMONIA'), and preprocess it for training.
+# Download the public dataset and preprocess the PNEUMONIA training class.
 
 def download_and_prepare_dataset():
     """
-    Downloads the Chest X-Ray (Pneumonia) dataset from Kaggle and prepares it for training.
+    Downloads the chest X-ray dataset from Mendeley and prepares it for training.
     """
     dataset_url = "https://data.mendeley.com/public-files/datasets/rscbjbr9sj/files/f12eaf6d-6023-432f-acc9-80c9d7393433/file_downloaded"
     zip_path = "chest_xray.zip"
@@ -123,9 +122,8 @@ def build_discriminator():
 
     return model
 
-# --- 5. THE "PRIVACY GUARDIAN" (SynthEthic's Secret Sauce) ---
-# Architectural Component: This class simulates our key differentiator. It calculates a "privacy loss"
-# to prevent the generator from simply memorizing and recreating training images.
+# --- 5. EXPERIMENTAL REFERENCE-SIMILARITY PENALTY ---
+# This legacy implementation uses signed pixels; see ../train.py for corrected SSIM scaling.
 class PrivacyGuardian:
     def __init__(self, training_data_sample, similarity_threshold=0.9):
         """
@@ -136,7 +134,7 @@ class PrivacyGuardian:
         """
         print("Privacy Guardian Initialized.")
         self.reference_batch = training_data_sample
-        # Using Structural Similarity Index (SSIM) as our metric. It's better than MSE for image similarity.
+        # Compare local image structure using SSIM.
         self.similarity_threshold = similarity_threshold
 
     def calculate_privacy_loss(self, generated_batch):
@@ -148,7 +146,7 @@ class PrivacyGuardian:
         # For each generated image, find its max similarity to any image in the reference batch
         for i in range(generated_batch.shape[0]):
             g_img = tf.expand_dims(generated_batch[i], 0)
-            # SSIM returns a value between -1 and 1. We scale it to 0-1.
+            # Legacy range handling is retained here; it is corrected in the supported trainer.
             ssim_scores = tf.image.ssim(g_img, self.reference_batch, max_val=2.0)
             max_similarity = tf.reduce_max(ssim_scores)
             max_similarities.append(max_similarity)
@@ -157,11 +155,11 @@ class PrivacyGuardian:
         privacy_violations = tf.maximum(0.0, tf.stack(max_similarities) - self.similarity_threshold)
         privacy_loss = tf.reduce_mean(privacy_violations)
 
-        # We add a small value to ensure it's not zero, which can cause training issues
+        # Historical constant offset; it does not change the gradient.
         return privacy_loss + 1e-6
 
 # --- 6. LOSS FUNCTIONS & OPTIMIZERS ---
-# Business Goal: Show technical competence by using standard, effective loss functions for GANs.
+# Binary cross-entropy objectives for adversarial training.
 cross_entropy_loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
 
 def discriminator_loss(real_output, fake_output):
@@ -179,8 +177,7 @@ discriminator_optimizer = optimizers.Adam(LEARNING_RATE, beta_1=BETA_1)
 
 
 # --- 7. THE TRAINING LOOP ---
-# Business Goal: This is the core of the demonstration. We will train the model and save
-# sample images at regular intervals to visually show the generator's progress.
+# Train the models and save fixed-noise samples at epoch boundaries.
 
 # A decorator to compile a function into a high-performance TensorFlow graph.
 @tf.function
@@ -200,7 +197,7 @@ def train_step(images, generator, discriminator, guardian, privacy_loss_weight=0
         gen_loss = generator_loss(fake_output)
         disc_loss = discriminator_loss(real_output, fake_output)
 
-        # --- SynthEthic's Differentiator ---
+        # Add the experimental similarity term.
         # Calculate the privacy loss and add it to the generator's loss
         privacy_loss = guardian.calculate_privacy_loss(generated_images)
         total_gen_loss = gen_loss + (privacy_loss_weight * privacy_loss)
@@ -283,7 +280,7 @@ if __name__ == '__main__':
     generator = build_generator()
     discriminator = build_discriminator()
 
-    # Print summaries to show investors the model architecture
+    # Display the model architectures.
     print("\n--- Generator Architecture ---")
     generator.summary()
     print("\n--- Discriminator Architecture ---")

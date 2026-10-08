@@ -9,6 +9,6 @@ These scripts preserve the project's original source work. Use `../train.py` for
 | `onepager_enhanced.py` | Logging and architecture exploration | Ends after model definitions; no complete training entry point. |
 | `onepager_enhanced_gpu.py` | Metal and mixed-precision exploration | NumPy/skimage similarity operations conflict with graph tracing and break differentiability; the penalty is added twice. |
 
-`requirements-legacy.txt` preserves the original dependency list. It is not the supported installation path. Historical comments describe design intent and may overstate properties that were never established; the root README and results page define the current project claims.
+`requirements-legacy.txt` preserves the original dependency list. It is not the supported installation path. Comments and descriptions have been clarified; the experimental algorithms are retained for historical context. The root README and results page define the current project claims.
 
 The historical epoch images in `docs/assets/` match the output naming and layout of `onepager.py`. The complete run log and environment were not retained, so exact reproduction of those historical images is not claimed. Old checkpoints are not compatible with the supported trainer.

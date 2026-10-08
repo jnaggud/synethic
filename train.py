@@ -322,6 +322,8 @@ def main(argv=None):
         environment = {
             "python": platform.python_version(),
             "tensorflow": tf.__version__,
+            "keras": tf.keras.__version__,
+            "numpy": np.__version__,
             "platform": platform.platform(),
             "training_images": count,
             "devices": [device.name for device in tf.config.get_visible_devices()],

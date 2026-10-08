@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# SynthEthic: Advanced Synthetic Medical Image Generation with Privacy Preservation
-# Enhanced version with detailed logging, progress tracking, and comprehensive privacy analysis
+# SynEthic: archived logging and architecture experiment.
+# Incomplete training implementation; use ../train.py for the supported trainer.
 
 import os
 import sys

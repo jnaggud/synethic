@@ -1,5 +1,7 @@
 # Results and verification
 
+[← Project overview](../README.md)
+
 ## Historical image generation
 
 ![Saved grids from epochs 1, 250, and 500](assets/training-progression.png)
@@ -16,8 +18,8 @@ Verified locally on 8 October 2026 with Python 3.10.13, TensorFlow 2.16.2, Keras
 
 | Check | Result |
 | --- | --- |
-| Automated tests | 10 passed |
-| Lint | Passed for the supported trainer, tests, and figure script |
+| Automated tests | 15 passed |
+| Lint and formatting | Passed for the supported trainer, inference CLI, tests, and figure script |
 | Dependency consistency | `pip check` passed |
 | JPEG and PNG preprocessing | Correct grayscale shape and normalization verified |
 | Train/test separation | Nested held-out folders are not loaded by the training loader |
@@ -25,11 +27,14 @@ Verified locally on 8 October 2026 with Python 3.10.13, TensorFlow 2.16.2, Keras
 | Training update | Generator weights changed after one training step |
 | Checkpoint restore | Model outputs, optimizer iterations, epoch, reference images, and noise-generator state restored |
 | CLI smoke test | Fresh run and resume verified; overwrite and configuration mismatch rejected |
+| Checkpoint inference | Restored generator reproduces the saved fixed-noise grid without loading the dataset |
+| Standalone model export | Reloaded Keras model matches checkpoint-generator outputs on independent noise inputs |
+| Inference input validation | Missing metadata/checkpoints, unmatched generator weights, invalid counts, and output overwrite are rejected |
 | Actual X-ray input | One training step completed with the documented eight-image data check |
 
 The actual-image check used 64×64 inputs, batch size 2, generator width 64, discriminator width 8, and one step. Reported losses were generator **1.3784**, discriminator **1.0582**, and similarity penalty **0.000000**. A zero penalty means no selected comparison exceeded the threshold during that step; it is not a privacy result.
 
-These are execution and regression checks. They do not measure model quality or demonstrate convergence. CI repeats the dataset-free CPU checks on Linux; the workflow status is visible in the repository badge.
+These are execution and regression checks. They do not measure model quality or demonstrate convergence. CI repeats the dataset-free CPU checks on Linux, runs the README training/export workflow, and retains fixture outputs and logs in its `smoke-demo` artifact for 14 days. The current status is visible in [GitHub Actions](https://github.com/jnaggud/synethic/actions/workflows/checks.yml).
 
 ## What remains unvalidated
 
